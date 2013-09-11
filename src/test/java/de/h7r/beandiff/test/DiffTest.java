@@ -3,6 +3,7 @@ package de.h7r.beandiff.test;
 import de.h7r.beandiff.BeanDiff;
 import de.h7r.beandiff.BeanDiffResult;
 import de.h7r.beandiff.internal.BeanDiffer;
+import de.h7r.beandiff.test.beans.MyCircularTestBeanA;
 import de.h7r.beandiff.test.beans.MyRecursiveTestBean;
 import de.h7r.beandiff.test.beans.MyTestBean;
 import org.junit.Assert;
@@ -79,7 +80,8 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPI2 () throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+    public void testSimpleAPIValues2 ()
+            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -92,30 +94,69 @@ public class DiffTest {
 
         BeanDiffResult result = diff.of (left, right);
         Assert.assertNotNull (result);
-        
+
         Assert.assertEquals (1, result.getMismatchingFields ().size ());
 
     }
 
     @Test
-    public void testSimpleAPI3 () {
+    public void testSimpleAPIValues3 ()
+            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
 
-        BeanDiffer<MyTestBean> diff = BeanDiff.ofInstances ();
+        MyTestBean left = new MyTestBean ();
+        left.setBar (1);
+        left.setFoo ("asdf");
+        MyTestBean right = new MyTestBean ();
+        right.setBar (1);
+        right.setFoo ("asdf");
 
+        BeanDiffer<MyTestBean> diff = BeanDiff.ofValues ();
+        Assert.assertNotNull (diff);
+
+        BeanDiffResult result = diff.of (left, right);
+        Assert.assertNotNull (result);
+
+        Assert.assertEquals (0, result.getMismatchingFields ().size ());
     }
 
     @Test
-    public void testSimpleAPI4 ()
+    public void testSimpleAPIInstances1 ()
+            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+
+        MyTestBean left = new MyTestBean ();
+        left.setBar (1);
+        left.setFoo ("asdf");
+        MyTestBean right = new MyTestBean ();
+        right.setBar (1);
+        right.setFoo ("asdf");
+
+        BeanDiffer<MyTestBean> diff = BeanDiff.ofInstances ();
+        Assert.assertNotNull (diff);
+
+        BeanDiffResult result = diff.of (left, right);
+        Assert.assertNotNull (result);
+
+        Assert.assertEquals (1, result.getMismatchingFields ().size ());
+    }
+
+    @Test
+    public void testSimpleAPIInstnaces2 ()
             throws NoSuchFieldException, IntrospectionException, InvocationTargetException, IllegalAccessException {
 
-        MyTestBean left = null;
-        MyTestBean right = null;
+        MyTestBean left = new MyTestBean ();
+        left.setBar (1);
+        String foo = "asdf";
+        left.setFoo (foo);
+        MyTestBean right = new MyTestBean ();
+        right.setBar (1);
+        right.setFoo (foo);
 
         BeanDiffer<MyTestBean> diff = BeanDiff.<MyTestBean>ofInstances ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
         Assert.assertNotNull (result);
+        Assert.assertEquals (0, result.getMismatchingFields ().size ());
     }
 
     @Test

@@ -1,4 +1,4 @@
-package de.h7r.beandiff.test;
+package de.h7r.beandiff.test.beans;
 
 public class MyCircularTestBeanA {
     private MyCircularTestBeanB b;
