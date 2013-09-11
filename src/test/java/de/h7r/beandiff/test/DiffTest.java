@@ -6,7 +6,10 @@ import de.h7r.beandiff.internal.BeanDiffer;
 import de.h7r.beandiff.test.beans.MyCircularTestBeanA;
 import de.h7r.beandiff.test.beans.MyRecursiveTestBean;
 import de.h7r.beandiff.test.beans.MyTestBean;
+import de.h7r.beandiff.test.beans.MyTestBean2;
+
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.beans.IntrospectionException;
@@ -120,7 +123,43 @@ public class DiffTest {
     }
 
     @Test
+    public void testSimpleAPIValues4 ()
+            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+
+        MyTestBean2 left = new MyTestBean2 ();
+        left.setFoo (new MyTestBean ());
+
+        MyTestBean2 right = new MyTestBean2 ();
+        right.setFoo (new MyTestBean ());
+
+        BeanDiffer<MyTestBean2> diff = BeanDiff.ofInstances ();
+        Assert.assertNotNull (diff);
+
+        BeanDiffResult result = diff.of (left, right);
+        Assert.assertNotNull (result);
+
+        Assert.assertEquals (0, result.getMismatchingFields ().size ());
+    }
+
+    @Test
     public void testSimpleAPIInstances1 ()
+            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+
+        MyTestBean left = new MyTestBean ();
+        left.setBar (1);
+        left.setFoo ("asdf");
+
+        BeanDiffer<MyTestBean> diff = BeanDiff.ofInstances ();
+        Assert.assertNotNull (diff);
+
+        BeanDiffResult result = diff.of (left, left);
+        Assert.assertNotNull (result);
+
+        Assert.assertEquals (0, result.getMismatchingFields ().size ());
+    }
+
+    @Test
+    public void testSimpleAPIInstances2 ()
             throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
 
         MyTestBean left = new MyTestBean ();
@@ -128,6 +167,7 @@ public class DiffTest {
         left.setFoo ("asdf");
         MyTestBean right = new MyTestBean ();
         right.setBar (1);
+        // java caches this string, so is ok.
         right.setFoo ("asdf");
 
         BeanDiffer<MyTestBean> diff = BeanDiff.ofInstances ();
@@ -136,11 +176,11 @@ public class DiffTest {
         BeanDiffResult result = diff.of (left, right);
         Assert.assertNotNull (result);
 
-        Assert.assertEquals (1, result.getMismatchingFields ().size ());
+        Assert.assertEquals (0, result.getMismatchingFields ().size ());
     }
 
     @Test
-    public void testSimpleAPIInstnaces2 ()
+    public void testSimpleAPIInstnaces3 ()
             throws NoSuchFieldException, IntrospectionException, InvocationTargetException, IllegalAccessException {
 
         MyTestBean left = new MyTestBean ();
@@ -156,6 +196,50 @@ public class DiffTest {
 
         BeanDiffResult result = diff.of (left, right);
         Assert.assertNotNull (result);
+        Assert.assertEquals (0, result.getMismatchingFields ().size ());
+    }
+
+    @Test
+    @Ignore
+    // FIXME find a proper use case. do i need to check by instance at all?
+    public void testSimpleAPIInstances4 ()
+            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+
+        MyTestBean2 left = new MyTestBean2 ();
+
+        left.setFoo (new MyTestBean ());
+        MyTestBean2 right = new MyTestBean2 ();
+
+        right.setFoo (new MyTestBean ());
+
+        BeanDiffer<MyTestBean2> diff = BeanDiff.ofInstances ();
+        Assert.assertNotNull (diff);
+
+        BeanDiffResult result = diff.of (left, right);
+        Assert.assertNotNull (result);
+
+        Assert.assertEquals (1, result.getMismatchingFields ().size ());
+    }
+
+    @Test
+    public void testSimpleAPIInstances5 ()
+            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+
+        MyTestBean2 left = new MyTestBean2 ();
+
+        MyTestBean myTestBean = new MyTestBean ();
+        left.setFoo (myTestBean);
+        MyTestBean2 right = new MyTestBean2 ();
+
+        // java caches this string, so is ok.
+        right.setFoo (myTestBean);
+
+        BeanDiffer<MyTestBean2> diff = BeanDiff.ofInstances ();
+        Assert.assertNotNull (diff);
+
+        BeanDiffResult result = diff.of (left, right);
+        Assert.assertNotNull (result);
+
         Assert.assertEquals (0, result.getMismatchingFields ().size ());
     }
 
