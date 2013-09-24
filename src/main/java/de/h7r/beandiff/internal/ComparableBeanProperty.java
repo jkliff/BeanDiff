@@ -10,10 +10,11 @@ public class ComparableBeanProperty {
     Class              containingClass;
     Object             left;
     Object             right;
+    Integer            index;
 
     @Override
     public String toString () {
 
-        return String.format ("%s -> %s: %s", path, property.getName (), state);
+        return String.format ("%s -> %s: %s", path, property != null ? property.getName () : null, state);
     }
 }

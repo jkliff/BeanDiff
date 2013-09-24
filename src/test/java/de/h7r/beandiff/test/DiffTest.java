@@ -1,5 +1,12 @@
 package de.h7r.beandiff.test;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import de.h7r.beandiff.BeanDiff;
 import de.h7r.beandiff.BeanDiffResult;
 import de.h7r.beandiff.internal.BeanDiffer;
@@ -8,13 +15,6 @@ import de.h7r.beandiff.test.beans.MyRecursiveTestBean;
 import de.h7r.beandiff.test.beans.MyTestBean;
 import de.h7r.beandiff.test.beans.MyTestBean2;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
-
 /**
  *
  */
@@ -22,7 +22,10 @@ public class DiffTest {
 
     @Test(expected = NullPointerException.class)
     public void testSimpleNPE1 ()
-            throws NoSuchFieldException, IntrospectionException, InvocationTargetException, IllegalAccessException {
+            throws NoSuchFieldException,
+                IntrospectionException,
+                InvocationTargetException,
+                IllegalAccessException {
 
         MyTestBean obj = new MyTestBean ();
 
@@ -32,7 +35,10 @@ public class DiffTest {
 
     @Test(expected = NullPointerException.class)
     public void testSimpleNPE2 ()
-            throws NoSuchFieldException, IntrospectionException, InvocationTargetException, IllegalAccessException {
+            throws NoSuchFieldException,
+                IntrospectionException,
+                InvocationTargetException,
+                IllegalAccessException {
 
         MyTestBean obj = new MyTestBean ();
 
@@ -42,7 +48,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPI ()
-            throws NoSuchFieldException, IntrospectionException, InvocationTargetException, IllegalAccessException {
+            throws NoSuchFieldException,
+                IntrospectionException,
+                InvocationTargetException,
+                IllegalAccessException {
 
         MyTestBean left = new MyTestBean ();
         MyTestBean right = new MyTestBean ();
@@ -56,7 +65,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPIRecursive ()
-            throws NoSuchFieldException, IntrospectionException, InvocationTargetException, IllegalAccessException {
+            throws NoSuchFieldException,
+                IntrospectionException,
+                InvocationTargetException,
+                IllegalAccessException {
 
         MyRecursiveTestBean left = new MyRecursiveTestBean ();
         MyRecursiveTestBean right = new MyRecursiveTestBean ();
@@ -70,7 +82,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPICircular ()
-            throws NoSuchFieldException, IntrospectionException, InvocationTargetException, IllegalAccessException {
+            throws NoSuchFieldException,
+                IntrospectionException,
+                InvocationTargetException,
+                IllegalAccessException {
 
         MyCircularTestBeanA left = new MyCircularTestBeanA ();
         MyCircularTestBeanA right = new MyCircularTestBeanA ();
@@ -84,7 +99,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPIValues2 ()
-            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+            throws NoSuchFieldException,
+                InvocationTargetException,
+                IllegalAccessException,
+                IntrospectionException {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -104,7 +122,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPIValues3 ()
-            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+            throws NoSuchFieldException,
+                InvocationTargetException,
+                IllegalAccessException,
+                IntrospectionException {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -124,7 +145,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPIValues4 ()
-            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+            throws NoSuchFieldException,
+                InvocationTargetException,
+                IllegalAccessException,
+                IntrospectionException {
 
         MyTestBean2 left = new MyTestBean2 ();
         left.setFoo (new MyTestBean ());
@@ -143,7 +167,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPIInstances1 ()
-            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+            throws NoSuchFieldException,
+                InvocationTargetException,
+                IllegalAccessException,
+                IntrospectionException {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -160,7 +187,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPIInstances2 ()
-            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+            throws NoSuchFieldException,
+                InvocationTargetException,
+                IllegalAccessException,
+                IntrospectionException {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -181,7 +211,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPIInstnaces3 ()
-            throws NoSuchFieldException, IntrospectionException, InvocationTargetException, IllegalAccessException {
+            throws NoSuchFieldException,
+                IntrospectionException,
+                InvocationTargetException,
+                IllegalAccessException {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -203,7 +236,10 @@ public class DiffTest {
     @Ignore
     // FIXME find a proper use case. do i need to check by instance at all?
     public void testSimpleAPIInstances4 ()
-            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+            throws NoSuchFieldException,
+                InvocationTargetException,
+                IllegalAccessException,
+                IntrospectionException {
 
         MyTestBean2 left = new MyTestBean2 ();
 
@@ -223,7 +259,10 @@ public class DiffTest {
 
     @Test
     public void testSimpleAPIInstances5 ()
-            throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, IntrospectionException {
+            throws NoSuchFieldException,
+                InvocationTargetException,
+                IllegalAccessException,
+                IntrospectionException {
 
         MyTestBean2 left = new MyTestBean2 ();
 

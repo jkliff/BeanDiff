@@ -5,9 +5,9 @@ package de.h7r.beandiff.test.beans;
  */
 public class MyRecursiveTestBean {
 
-    private String     lala1;
-    private String     lala2;
-    private MyTestBean bean;
+    private String          lala1;
+    private String          lala2;
+    private MyTestBean      bean;
     private MyOtherTestBean bean2;
 
     public MyTestBean getBean () {
