@@ -103,7 +103,7 @@ public abstract class BeanDiffer <T> {
         final Class<? extends Object> class2 = right.getClass ();
 
         if (!class1.equals (class2)) {
-            System.out.println ("not same class");
+            // System.out.println ("not same class");
             final ComparableBeanProperty cbp = new ComparableBeanProperty ();
             cbp.setPath (path);
 
@@ -118,7 +118,7 @@ public abstract class BeanDiffer <T> {
         }
         if (left instanceof Iterable) {
 
-            System.out.println ("iterables");
+            // System.out.println ("iterables");
             Iterable<?> leftIterable = (Iterable<?>) left;
             Iterable<?> rightIterable = (Iterable<?>) right;
 
@@ -139,7 +139,7 @@ public abstract class BeanDiffer <T> {
                     continue;
                 }
 
-                System.out.println ("nulls");
+                // System.out.println ("nulls");
                 final ComparableBeanProperty cbp = new ComparableBeanProperty ();
                 cbp.setPath (String.format ("%s[%s]", path, idx));
                 cbp.setIndex (idx);
@@ -155,11 +155,11 @@ public abstract class BeanDiffer <T> {
 
         } else if (left instanceof Collection) {
 
-            System.out.println ("iterables");
+            // System.out.println ("iterables");
             Collection<?> leftCollection = (Collection<?>) left;
             Collection<?> rightCollection = (Collection<?>) right;
 
-            System.out.println ("nulls");
+            // System.out.println ("nulls");
             final ComparableBeanProperty cbp = new ComparableBeanProperty ();
             cbp.setPath (path);
             cbp.setProperty (null);
@@ -189,7 +189,8 @@ public abstract class BeanDiffer <T> {
             Method readMethod = pd.getReadMethod ();
 
             if (readMethod == null) {
-                System.out.println (String.format ("can't evaluate property %s: no read method", pd));
+                // System.out.println (String.format
+                // ("can't evaluate property %s: no read method", pd));
                 continue;
             }
 
