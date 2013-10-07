@@ -5,12 +5,14 @@
 
     <groupId>BeanDiff</groupId>
     <artifactId>BeanDiff</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
     <description>Comparator of beans</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <packaging>jar</packaging>
 
     <build>
         <plugins>
