@@ -6,7 +6,8 @@
     <groupId>BeanDiff</groupId>
     <artifactId>BeanDiff</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    <description>Comparator of beans</description>
+    
     <build>
         <plugins>
             <plugin>
