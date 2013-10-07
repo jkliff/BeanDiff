@@ -1,9 +1,5 @@
 package de.h7r.beandiff.test;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -23,11 +19,7 @@ import de.h7r.beandiff.test.beans.MyTestBean2;
 public class DiffTest {
 
     @Test(expected = NullPointerException.class)
-    public void testSimpleNPE1 ()
-            throws NoSuchFieldException,
-                IntrospectionException,
-                InvocationTargetException,
-                IllegalAccessException {
+    public void testSimpleNPE1 () {
 
         MyTestBean obj = new MyTestBean ();
 
@@ -36,11 +28,7 @@ public class DiffTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testSimpleNPE2 ()
-            throws NoSuchFieldException,
-                IntrospectionException,
-                InvocationTargetException,
-                IllegalAccessException {
+    public void testSimpleNPE2 () {
 
         MyTestBean obj = new MyTestBean ();
 
@@ -49,11 +37,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPI ()
-            throws NoSuchFieldException,
-                IntrospectionException,
-                InvocationTargetException,
-                IllegalAccessException {
+    public void testSimpleAPI () {
 
         MyTestBean left = new MyTestBean ();
         MyTestBean right = new MyTestBean ();
@@ -66,11 +50,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPIRecursive ()
-            throws NoSuchFieldException,
-                IntrospectionException,
-                InvocationTargetException,
-                IllegalAccessException {
+    public void testSimpleAPIRecursive () {
 
         MyRecursiveTestBean left = new MyRecursiveTestBean ();
         MyRecursiveTestBean right = new MyRecursiveTestBean ();
@@ -83,11 +63,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPICircular ()
-            throws NoSuchFieldException,
-                IntrospectionException,
-                InvocationTargetException,
-                IllegalAccessException {
+    public void testSimpleAPICircular () {
 
         MyCircularTestBeanA left = new MyCircularTestBeanA ();
         MyCircularTestBeanA right = new MyCircularTestBeanA ();
@@ -100,11 +76,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPIValues2 ()
-            throws NoSuchFieldException,
-                InvocationTargetException,
-                IllegalAccessException,
-                IntrospectionException {
+    public void testSimpleAPIValues2 () {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -123,11 +95,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPIValues3 ()
-            throws NoSuchFieldException,
-                InvocationTargetException,
-                IllegalAccessException,
-                IntrospectionException {
+    public void testSimpleAPIValues3 () {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -146,11 +114,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPIValues4 ()
-            throws NoSuchFieldException,
-                InvocationTargetException,
-                IllegalAccessException,
-                IntrospectionException {
+    public void testSimpleAPIValues4 () {
 
         MyTestBean2 left = new MyTestBean2 ();
         left.setFoo (new MyTestBean ());
@@ -168,11 +132,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPIInstances1 ()
-            throws NoSuchFieldException,
-                InvocationTargetException,
-                IllegalAccessException,
-                IntrospectionException {
+    public void testSimpleAPIInstances1 () {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -188,11 +148,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPIInstances2 ()
-            throws NoSuchFieldException,
-                InvocationTargetException,
-                IllegalAccessException,
-                IntrospectionException {
+    public void testSimpleAPIInstances2 () {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -212,11 +168,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPIInstnaces3 ()
-            throws NoSuchFieldException,
-                IntrospectionException,
-                InvocationTargetException,
-                IllegalAccessException {
+    public void testSimpleAPIInstnaces3 () {
 
         MyTestBean left = new MyTestBean ();
         left.setBar (1);
@@ -237,11 +189,7 @@ public class DiffTest {
     @Test
     @Ignore
     // FIXME find a proper use case. do i need to check by instance at all?
-    public void testSimpleAPIInstances4 ()
-            throws NoSuchFieldException,
-                InvocationTargetException,
-                IllegalAccessException,
-                IntrospectionException {
+    public void testSimpleAPIInstances4 () {
 
         MyTestBean2 left = new MyTestBean2 ();
 
@@ -260,11 +208,7 @@ public class DiffTest {
     }
 
     @Test
-    public void testSimpleAPIInstances5 ()
-            throws NoSuchFieldException,
-                InvocationTargetException,
-                IllegalAccessException,
-                IntrospectionException {
+    public void testSimpleAPIInstances5 () {
 
         MyTestBean2 left = new MyTestBean2 ();
 
@@ -312,18 +256,14 @@ public class DiffTest {
     }
 
     @Test
-    public void testBeansDifferentClasses ()
-            throws NoSuchFieldException,
-                InvocationTargetException,
-                IllegalAccessException,
-                IntrospectionException {
+    public void testBeansDifferentClasses () {
         BeanDiffer<Object> diff = BeanDiff.ofInstances ();
         // non cached Integer
         final Integer right = 4000;
         final String left = "foo";
         BeanDiffResult of = diff.of (left, right);
         Assert.assertNotNull (of);
-        Assert.assertEquals(1, of.getMismatchingFields ().size ());
+        Assert.assertEquals (1, of.getMismatchingFields ().size ());
         ComparableBeanProperty mismatchingFields = of.getMismatchingFields ().iterator ().next ();
         Assert.assertTrue (mismatchingFields.getLeft () == left);
         Assert.assertTrue (mismatchingFields.getRight () == right);

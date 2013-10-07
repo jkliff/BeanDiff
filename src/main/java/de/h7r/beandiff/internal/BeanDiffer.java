@@ -14,11 +14,13 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.h7r.beandiff.BeanDiffResult;
+import de.h7r.beandiff.BeanDiffRuntimeException;
 
 /**
  *
@@ -28,29 +30,34 @@ public abstract class BeanDiffer <T> {
     private Set<Integer> visitedObjectAddresses = Sets.newHashSet ();
 
     public final BeanDiffResult of (final T left,
-                                    final T right)
-            throws NoSuchFieldException,
-                IntrospectionException,
-                InvocationTargetException,
-                IllegalAccessException {
+                                    final T right) {
+        try {
+            Preconditions.checkNotNull (left);
+            Preconditions.checkNotNull (right);
 
-        Preconditions.checkNotNull (left);
-        Preconditions.checkNotNull (right);
+            final BeanFieldComparator bfc = getComparationStrategy ();
 
-        final BeanFieldComparator bfc = getComparationStrategy ();
+            final List<ComparableBeanProperty> properties = getProperties (bfc, "", Introspector.getBeanInfo (left.getClass ()), left,
+                    right);
 
-        final List<ComparableBeanProperty> properties = getProperties (bfc, "", Introspector.getBeanInfo (left.getClass ()), left, right);
+            final Set<ComparableBeanProperty> mismatches = ImmutableSet.copyOf (Iterables.filter (properties,
+                    new Predicate<ComparableBeanProperty> () {
+                        public boolean apply (ComparableBeanProperty cbp) {
+                            return !cbp.isMatching ();
+                        }
+                    }));
 
-        final Iterable<ComparableBeanProperty> mismatches = Iterables.filter (properties, new Predicate<ComparableBeanProperty> () {
-            public boolean apply (ComparableBeanProperty cbp) {
-                return !cbp.isMatching ();
-            }
-        });
+            final BeanDiffResult result = new BeanDiffResult ();
+            result.setMismatchingFields (Collections.unmodifiableSet (Sets.newHashSet (mismatches)));
+            return result;
 
-        System.out.println (properties);
-        final BeanDiffResult result = new BeanDiffResult ();
-        result.setMismatchingFields (Collections.unmodifiableSet (Sets.newHashSet (mismatches)));
-        return result;
+        } catch (IntrospectionException e) {
+            throw new BeanDiffRuntimeException (e);
+        } catch (InvocationTargetException e) {
+            throw new BeanDiffRuntimeException (e);
+        } catch (IllegalAccessException e) {
+            throw new BeanDiffRuntimeException (e);
+        }
     }
 
     private List<ComparableBeanProperty> getProperties (final BeanFieldComparator comparator,
