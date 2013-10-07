@@ -1,6 +1,5 @@
 package de.h7r.beandiff.internal;
 
-
 /**
  *
  */
