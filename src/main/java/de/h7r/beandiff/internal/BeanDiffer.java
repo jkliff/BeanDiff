@@ -302,4 +302,5 @@ public abstract class BeanDiffer <T> {
         return properties;
     }
 
+    public abstract BeanFieldComparator getComparationStrategy ();
 }
