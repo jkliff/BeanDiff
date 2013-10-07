@@ -43,7 +43,7 @@ public abstract class BeanDiffer <T> {
 
         final Iterable<ComparableBeanProperty> mismatches = Iterables.filter (properties, new Predicate<ComparableBeanProperty> () {
             public boolean apply (ComparableBeanProperty cbp) {
-                return !cbp.isState ();
+                return !cbp.isMatching ();
             }
         });
 
@@ -101,7 +101,7 @@ public abstract class BeanDiffer <T> {
             cbp.setPath (path);
 
             cbp.setProperty (null);
-            cbp.setState (false);
+            cbp.setMatching (false);
             cbp.setContainingClass (left.getClass ());
             cbp.setLeft (left);
             cbp.setRight (right);
@@ -137,7 +137,7 @@ public abstract class BeanDiffer <T> {
                 cbp.setPath (String.format ("%s[%s]", path, idx));
                 cbp.setIndex (idx);
 
-                cbp.setState (Iterables.elementsEqual (leftIterable, rightIterable));
+                cbp.setMatching (Iterables.elementsEqual (leftIterable, rightIterable));
                 cbp.setContainingClass (left.getClass ());
                 cbp.setLeft (left);
                 cbp.setRight (right);
@@ -156,7 +156,7 @@ public abstract class BeanDiffer <T> {
             final ComparableBeanProperty cbp = new ComparableBeanProperty ();
             cbp.setPath (path);
             cbp.setProperty (null);
-            cbp.setState (Iterables.elementsEqual (leftCollection, rightCollection));
+            cbp.setMatching (Iterables.elementsEqual (leftCollection, rightCollection));
             cbp.setContainingClass (left.getClass ());
             cbp.setLeft (left);
             cbp.setRight (right);
@@ -212,9 +212,9 @@ public abstract class BeanDiffer <T> {
 
                     boolean state = false;
                     if (leftInvoke != null) {
-                        cbp.setState (leftInvoke.equals (rightInvoke));
+                        cbp.setMatching (leftInvoke.equals (rightInvoke));
                     } else {
-                        cbp.setState (leftInvoke == null && rightInvoke == null);
+                        cbp.setMatching (leftInvoke == null && rightInvoke == null);
                     }
 
                     cbp.setContainingClass (left.getClass ());
@@ -231,7 +231,7 @@ public abstract class BeanDiffer <T> {
                     final ComparableBeanProperty cbp = new ComparableBeanProperty ();
                     cbp.setPath (path);
                     cbp.setProperty (pd);
-                    cbp.setState (comparator.compare (newLeft, newRight));
+                    cbp.setMatching (comparator.compare (newLeft, newRight));
                     cbp.setContainingClass (left.getClass ());
                     cbp.setLeft (left);
                     cbp.setRight (right);
@@ -244,7 +244,7 @@ public abstract class BeanDiffer <T> {
                         final ComparableBeanProperty cbp = new ComparableBeanProperty ();
                         cbp.setPath (path);
                         cbp.setProperty (pd);
-                        cbp.setState (true);
+                        cbp.setMatching (true);
                         properties.add (cbp);
                         cbp.setContainingClass (left.getClass ());
                         cbp.setLeft (left);
@@ -254,7 +254,7 @@ public abstract class BeanDiffer <T> {
                         final ComparableBeanProperty cbp = new ComparableBeanProperty ();
                         cbp.setPath (path);
                         cbp.setProperty (pd);
-                        cbp.setState (false);
+                        cbp.setMatching (false);
                         properties.add (cbp);
                         cbp.setContainingClass (right.getClass ());
                         cbp.setLeft (left);
@@ -265,7 +265,7 @@ public abstract class BeanDiffer <T> {
                         cbp.setPath (path);
 
                         cbp.setProperty (pd);
-                        cbp.setState (false);
+                        cbp.setMatching (false);
                         properties.add (cbp);
                         cbp.setContainingClass (left.getClass ());
                         cbp.setLeft (left);
@@ -281,7 +281,7 @@ public abstract class BeanDiffer <T> {
                         cbp.setPath (path);
 
                         cbp.setProperty (pd);
-                        cbp.setState (newLeft == newRight);
+                        cbp.setMatching (newLeft == newRight);
                         cbp.setContainingClass (left.getClass ());
                         cbp.setLeft (newLeft);
                         cbp.setRight (newRight);

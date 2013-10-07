@@ -5,7 +5,7 @@ import java.beans.PropertyDescriptor;
 public class ComparableBeanProperty {
 
     private String             path;
-    private boolean            state = true;
+    private boolean            matching = true;
     private PropertyDescriptor property;
     private Class<?>           containingClass;
     private Object             left;
@@ -15,7 +15,7 @@ public class ComparableBeanProperty {
     @Override
     public String toString () {
 
-        return String.format ("%s -> %s: %s", path, property != null ? property.getName () : null, state);
+        return String.format ("%s -> %s: %s", path, property != null ? property.getName () : null, matching);
     }
 
     public String getPath () {
@@ -26,12 +26,12 @@ public class ComparableBeanProperty {
         this.path = path;
     }
 
-    public boolean isState () {
-        return state;
+    public boolean isMatching () {
+        return matching;
     }
 
-    public void setState (boolean state) {
-        this.state = state;
+    public void setMatching (boolean state) {
+        this.matching = state;
     }
 
     public PropertyDescriptor getProperty () {
