@@ -15,7 +15,7 @@ public class BeanDiff {
 
     }
 
-    public static <T> BeanDiffer<T> ofInstances () {
+    public static <T> BeanDiffer<T> newInstance () {
 
         return new InstanceBeanDiffer<T> ();
 

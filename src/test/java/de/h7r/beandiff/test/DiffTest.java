@@ -122,7 +122,7 @@ public class DiffTest {
         MyTestBean2 right = new MyTestBean2 ();
         right.setFoo (new MyTestBean ());
 
-        BeanDiffer<MyTestBean2> diff = BeanDiff.ofInstances ();
+        BeanDiffer<MyTestBean2> diff = BeanDiff.newInstance ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
@@ -138,7 +138,7 @@ public class DiffTest {
         left.setBar (1);
         left.setFoo ("asdf");
 
-        BeanDiffer<MyTestBean> diff = BeanDiff.ofInstances ();
+        BeanDiffer<MyTestBean> diff = BeanDiff.newInstance ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, left);
@@ -158,7 +158,7 @@ public class DiffTest {
         // java caches this string, so is ok.
         right.setFoo ("asdf");
 
-        BeanDiffer<MyTestBean> diff = BeanDiff.ofInstances ();
+        BeanDiffer<MyTestBean> diff = BeanDiff.newInstance ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
@@ -178,7 +178,7 @@ public class DiffTest {
         right.setBar (1);
         right.setFoo (foo);
 
-        BeanDiffer<MyTestBean> diff = BeanDiff.<MyTestBean>ofInstances ();
+        BeanDiffer<MyTestBean> diff = BeanDiff.<MyTestBean>newInstance ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
@@ -198,7 +198,7 @@ public class DiffTest {
 
         right.setFoo (new MyTestBean ());
 
-        BeanDiffer<MyTestBean2> diff = BeanDiff.ofInstances ();
+        BeanDiffer<MyTestBean2> diff = BeanDiff.newInstance ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
@@ -219,7 +219,7 @@ public class DiffTest {
         // java caches this string, so is ok.
         right.setFoo (myTestBean);
 
-        BeanDiffer<MyTestBean2> diff = BeanDiff.ofInstances ();
+        BeanDiffer<MyTestBean2> diff = BeanDiff.newInstance ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
@@ -228,6 +228,41 @@ public class DiffTest {
         Assert.assertEquals (0, result.getMismatchingFields ().size ());
     }
 
+    /*
+     * @Test
+     * 
+     * @Ignore public void testStopOnFirstMismatch1 () {
+     * 
+     * MyTestBean left = new MyTestBean (); left.setBar (1); left.setFoo
+     * ("asdf"); MyTestBean right = new MyTestBean (); right.setBar (1);
+     * 
+     * BeanDiffer<MyTestBean> diff = BeanDiff.stopOnFirstMismatch ().newInstance
+     * (); Assert.assertNotNull (diff);
+     * 
+     * BeanDiffResult result = diff.of (left, right); Assert.assertNotNull
+     * (result);
+     * 
+     * Assert.assertEquals (1, result.getMismatchingFields ().size ());
+     * 
+     * }
+     * 
+     * @Test public void testStopOnFirstMismatch2 () {
+     * 
+     * MyTestBean2 left = new MyTestBean2 ();
+     * 
+     * MyTestBean myTestBean = new MyTestBean (); left.setFoo (myTestBean);
+     * MyTestBean2 right = new MyTestBean2 ();
+     * 
+     * // java caches this string, so is ok. right.setFoo (myTestBean);
+     * 
+     * BeanDiffer<MyTestBean2> diff = BeanDiff.stopOnFirstMismatch
+     * ().newInstance (); Assert.assertNotNull (diff);
+     * 
+     * BeanDiffResult result = diff.of (left, right); Assert.assertNotNull
+     * (result);
+     * 
+     * Assert.assertEquals (0, result.getMismatchingFields ().size ()); }
+     */
     @Test
     public void testNoDiff1 () {
         // Set<Field> fields = BeanDiff.newInstance ().
@@ -257,7 +292,7 @@ public class DiffTest {
 
     @Test
     public void testBeansDifferentClasses () {
-        BeanDiffer<Object> diff = BeanDiff.ofInstances ();
+        BeanDiffer<Object> diff = BeanDiff.newInstance ();
         // non cached Integer
         final Integer right = 4000;
         final String left = "foo";

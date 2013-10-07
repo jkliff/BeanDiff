@@ -303,4 +303,5 @@ public abstract class BeanDiffer <T> {
     }
 
     public abstract BeanFieldComparator getComparationStrategy ();
+
 }
