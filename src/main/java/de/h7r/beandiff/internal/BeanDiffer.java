@@ -179,132 +179,125 @@ public abstract class BeanDiffer <T> {
                 continue;
             }
 
-            try {
-
-                if (!pd.getPropertyType ().isPrimitive () && visitedObjectAddresses.contains (System.identityHashCode (pd))) {
-                    System.out.println ("WARN: already visited object. would cause circular dependency. skipping.");
-                    continue;
-                }
-
-                visitedObjectAddresses.add (System.identityHashCode (pd));
-
-                Method readMethod = pd.getReadMethod ();
-
-                if (readMethod == null) {
-                    System.out.println (String.format ("can't evaluate property %s: no read method", pd));
-                    continue;
-                }
-
-                if (pd.getPropertyType ().isPrimitive ()) {
-
-                    Object leftInvoke = null;
-                    if (left != null) {
-                        leftInvoke = readMethod.invoke (left);
-                    }
-
-                    Object rightInvoke = null;
-                    if (right != null) {
-                        rightInvoke = readMethod.invoke (right);
-                    }
-
-                    // System.out.println ("primitive comparisson " + pd);
-                    // System.out.println (leftInvoke == null ? "null obj" :
-                    // leftInvoke);
-                    // System.out.println (rightInvoke == null ? "null obj" :
-                    // rightInvoke);
-
-                    final ComparableBeanProperty cbp = new ComparableBeanProperty ();
-                    cbp.setPath (path);
-                    cbp.setProperty (pd);
-
-                    boolean state = false;
-                    if (leftInvoke != null) {
-                        cbp.setMatching (leftInvoke.equals (rightInvoke));
-                    } else {
-                        cbp.setMatching (leftInvoke == null && rightInvoke == null);
-                    }
-
-                    cbp.setContainingClass (left.getClass ());
-                    cbp.setLeft (left);
-                    cbp.setRight (right);
-                    properties.add (cbp);
-                } else if (pd.getPropertyType ().getPackage ().getName ().equals ("java.lang")) {
-                    // System.out.println ("java lang comparisson of " + pd +
-                    // ", " + pd.getPropertyType ().getPackage ().getName ());
-
-                    final Object newLeft = readMethod.invoke (left);
-                    final Object newRight = readMethod.invoke (right);
-
-                    final ComparableBeanProperty cbp = new ComparableBeanProperty ();
-                    cbp.setPath (path);
-                    cbp.setProperty (pd);
-                    cbp.setMatching (comparator.compare (newLeft, newRight));
-                    cbp.setContainingClass (left.getClass ());
-                    cbp.setLeft (left);
-                    cbp.setRight (right);
-                    properties.add (cbp);
-
-                } else {
-
-                    // full comparison
-                    if (left == null && right == null) {
-                        final ComparableBeanProperty cbp = new ComparableBeanProperty ();
-                        cbp.setPath (path);
-                        cbp.setProperty (pd);
-                        cbp.setMatching (true);
-                        properties.add (cbp);
-                        cbp.setContainingClass (left.getClass ());
-                        cbp.setLeft (left);
-                        cbp.setRight (right);
-                        continue;
-                    } else if (left == null && right != null) {
-                        final ComparableBeanProperty cbp = new ComparableBeanProperty ();
-                        cbp.setPath (path);
-                        cbp.setProperty (pd);
-                        cbp.setMatching (false);
-                        properties.add (cbp);
-                        cbp.setContainingClass (right.getClass ());
-                        cbp.setLeft (left);
-                        cbp.setRight (right);
-                        continue;
-                    } else if (left != null && right == null) {
-                        final ComparableBeanProperty cbp = new ComparableBeanProperty ();
-                        cbp.setPath (path);
-
-                        cbp.setProperty (pd);
-                        cbp.setMatching (false);
-                        properties.add (cbp);
-                        cbp.setContainingClass (left.getClass ());
-                        cbp.setLeft (left);
-                        cbp.setRight (right);
-                        continue;
-                    }
-
-                    final Object newLeft = readMethod.invoke (left);
-                    final Object newRight = readMethod.invoke (right);
-
-                    if (newLeft == null || newRight == null) {
-                        final ComparableBeanProperty cbp = new ComparableBeanProperty ();
-                        cbp.setPath (path);
-
-                        cbp.setProperty (pd);
-                        cbp.setMatching (newLeft == newRight);
-                        cbp.setContainingClass (left.getClass ());
-                        cbp.setLeft (newLeft);
-                        cbp.setRight (newRight);
-                        properties.add (cbp);
-                        continue;
-                    }
-
-                    properties.addAll (getProperties (comparator, path + "." + pd.getName (),
-                            Introspector.getBeanInfo (pd.getPropertyType ()), newLeft, newRight));
-                }
-
-            } catch (NullPointerException e) {
-                System.out.println ("processing " + pd);
-                e.printStackTrace ();
-                throw e;
+            if (!pd.getPropertyType ().isPrimitive () && visitedObjectAddresses.contains (System.identityHashCode (pd))) {
+                System.out.println ("WARN: already visited object. would cause circular dependency. skipping.");
+                continue;
             }
+
+            visitedObjectAddresses.add (System.identityHashCode (pd));
+
+            Method readMethod = pd.getReadMethod ();
+
+            if (readMethod == null) {
+                System.out.println (String.format ("can't evaluate property %s: no read method", pd));
+                continue;
+            }
+
+            if (pd.getPropertyType ().isPrimitive ()) {
+
+                Object leftInvoke = null;
+                if (left != null) {
+                    leftInvoke = readMethod.invoke (left);
+                }
+
+                Object rightInvoke = null;
+                if (right != null) {
+                    rightInvoke = readMethod.invoke (right);
+                }
+
+                // System.out.println ("primitive comparisson " + pd);
+                // System.out.println (leftInvoke == null ? "null obj" :
+                // leftInvoke);
+                // System.out.println (rightInvoke == null ? "null obj" :
+                // rightInvoke);
+
+                final ComparableBeanProperty cbp = new ComparableBeanProperty ();
+                cbp.setPath (path);
+                cbp.setProperty (pd);
+
+                boolean state = false;
+                if (leftInvoke != null) {
+                    cbp.setMatching (leftInvoke.equals (rightInvoke));
+                } else {
+                    cbp.setMatching (leftInvoke == null && rightInvoke == null);
+                }
+
+                cbp.setContainingClass (left.getClass ());
+                cbp.setLeft (left);
+                cbp.setRight (right);
+                properties.add (cbp);
+            } else if (pd.getPropertyType ().getPackage ().getName ().equals ("java.lang")) {
+                // System.out.println ("java lang comparisson of " + pd +
+                // ", " + pd.getPropertyType ().getPackage ().getName ());
+
+                final Object newLeft = readMethod.invoke (left);
+                final Object newRight = readMethod.invoke (right);
+
+                final ComparableBeanProperty cbp = new ComparableBeanProperty ();
+                cbp.setPath (path);
+                cbp.setProperty (pd);
+                cbp.setMatching (comparator.compare (newLeft, newRight));
+                cbp.setContainingClass (left.getClass ());
+                cbp.setLeft (left);
+                cbp.setRight (right);
+                properties.add (cbp);
+
+            } else {
+
+                // full comparison
+                if (left == null && right == null) {
+                    final ComparableBeanProperty cbp = new ComparableBeanProperty ();
+                    cbp.setPath (path);
+                    cbp.setProperty (pd);
+                    cbp.setMatching (true);
+                    properties.add (cbp);
+                    cbp.setContainingClass (left.getClass ());
+                    cbp.setLeft (left);
+                    cbp.setRight (right);
+                    continue;
+                } else if (left == null && right != null) {
+                    final ComparableBeanProperty cbp = new ComparableBeanProperty ();
+                    cbp.setPath (path);
+                    cbp.setProperty (pd);
+                    cbp.setMatching (false);
+                    properties.add (cbp);
+                    cbp.setContainingClass (right.getClass ());
+                    cbp.setLeft (left);
+                    cbp.setRight (right);
+                    continue;
+                } else if (left != null && right == null) {
+                    final ComparableBeanProperty cbp = new ComparableBeanProperty ();
+                    cbp.setPath (path);
+
+                    cbp.setProperty (pd);
+                    cbp.setMatching (false);
+                    properties.add (cbp);
+                    cbp.setContainingClass (left.getClass ());
+                    cbp.setLeft (left);
+                    cbp.setRight (right);
+                    continue;
+                }
+
+                final Object newLeft = readMethod.invoke (left);
+                final Object newRight = readMethod.invoke (right);
+
+                if (newLeft == null || newRight == null) {
+                    final ComparableBeanProperty cbp = new ComparableBeanProperty ();
+                    cbp.setPath (path);
+
+                    cbp.setProperty (pd);
+                    cbp.setMatching (newLeft == newRight);
+                    cbp.setContainingClass (left.getClass ());
+                    cbp.setLeft (newLeft);
+                    cbp.setRight (newRight);
+                    properties.add (cbp);
+                    continue;
+                }
+
+                properties.addAll (getProperties (comparator, path + "." + pd.getName (), Introspector.getBeanInfo (pd.getPropertyType ()),
+                        newLeft, newRight));
+            }
+
         }
         return properties;
     }
