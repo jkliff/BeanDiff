@@ -2,6 +2,7 @@ package de.h7r.beandiff.test;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -10,6 +11,7 @@ import org.junit.Test;
 import de.h7r.beandiff.BeanDiff;
 import de.h7r.beandiff.BeanDiffResult;
 import de.h7r.beandiff.internal.BeanDiffer;
+import de.h7r.beandiff.internal.ComparableBeanProperty;
 import de.h7r.beandiff.test.beans.MyCircularTestBeanA;
 import de.h7r.beandiff.test.beans.MyRecursiveTestBean;
 import de.h7r.beandiff.test.beans.MyTestBean;
@@ -309,4 +311,22 @@ public class DiffTest {
 
     }
 
+    @Test
+    public void testBeansDifferentClasses ()
+            throws NoSuchFieldException,
+                InvocationTargetException,
+                IllegalAccessException,
+                IntrospectionException {
+        BeanDiffer<Object> diff = BeanDiff.ofInstances ();
+        // non cached Integer
+        final Integer right = 4000;
+        final String left = "foo";
+        BeanDiffResult of = diff.of (left, right);
+        Assert.assertNotNull (of);
+        Assert.assertEquals(1, of.getMismatchingFields ().size ());
+        ComparableBeanProperty mismatchingFields = of.getMismatchingFields ().iterator ().next ();
+        Assert.assertTrue (mismatchingFields.getLeft () == left);
+        Assert.assertTrue (mismatchingFields.getRight () == right);
+
+    }
 }
