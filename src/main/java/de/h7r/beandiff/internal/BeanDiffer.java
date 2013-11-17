@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 
 import de.h7r.beandiff.BeanDiffResult;
 import de.h7r.beandiff.BeanDiffRuntimeException;
+import de.h7r.beandiff.logger.DiffLogger;
 
 /**
  *
@@ -28,6 +29,7 @@ import de.h7r.beandiff.BeanDiffRuntimeException;
 public abstract class BeanDiffer <T> {
 
     private Set<Integer> visitedObjectAddresses = Sets.newHashSet ();
+    private DiffLogger   logger                 = DiffLogger.NOOP_LOGGER;
 
     public final BeanDiffResult of (final T left,
                                     final T right) {
@@ -103,7 +105,7 @@ public abstract class BeanDiffer <T> {
         final Class<? extends Object> class2 = right.getClass ();
 
         if (!class1.equals (class2)) {
-            // System.out.println ("not same class");
+
             final ComparableBeanProperty cbp = new ComparableBeanProperty ();
             cbp.setPath (path);
 
@@ -118,7 +120,6 @@ public abstract class BeanDiffer <T> {
         }
         if (left instanceof Iterable) {
 
-            // System.out.println ("iterables");
             Iterable<?> leftIterable = (Iterable<?>) left;
             Iterable<?> rightIterable = (Iterable<?>) right;
 
@@ -139,7 +140,6 @@ public abstract class BeanDiffer <T> {
                     continue;
                 }
 
-                // System.out.println ("nulls");
                 final ComparableBeanProperty cbp = new ComparableBeanProperty ();
                 cbp.setPath (String.format ("%s[%s]", path, idx));
                 cbp.setIndex (idx);
@@ -155,11 +155,9 @@ public abstract class BeanDiffer <T> {
 
         } else if (left instanceof Collection) {
 
-            // System.out.println ("iterables");
             Collection<?> leftCollection = (Collection<?>) left;
             Collection<?> rightCollection = (Collection<?>) right;
 
-            // System.out.println ("nulls");
             final ComparableBeanProperty cbp = new ComparableBeanProperty ();
             cbp.setPath (path);
             cbp.setProperty (null);
@@ -179,18 +177,19 @@ public abstract class BeanDiffer <T> {
                 continue;
             }
 
-            if (!pd.getPropertyType ().isPrimitive () && visitedObjectAddresses.contains (System.identityHashCode (pd))) {
-                System.out.println ("WARN: already visited object. would cause circular dependency. skipping.");
+            int idHashCode = System.identityHashCode (pd);
+
+            if (!pd.getPropertyType ().isPrimitive () && visitedObjectAddresses.contains (idHashCode)) {
+                logger.log ("WARN: already visited object. would cause circular dependency. skipping.");
                 continue;
             }
 
-            visitedObjectAddresses.add (System.identityHashCode (pd));
+            visitedObjectAddresses.add (idHashCode);
 
             Method readMethod = pd.getReadMethod ();
 
             if (readMethod == null) {
-                // System.out.println (String.format
-                // ("can't evaluate property %s: no read method", pd));
+
                 continue;
             }
 
@@ -205,12 +204,6 @@ public abstract class BeanDiffer <T> {
                 if (right != null) {
                     rightInvoke = readMethod.invoke (right);
                 }
-
-                // System.out.println ("primitive comparisson " + pd);
-                // System.out.println (leftInvoke == null ? "null obj" :
-                // leftInvoke);
-                // System.out.println (rightInvoke == null ? "null obj" :
-                // rightInvoke);
 
                 final ComparableBeanProperty cbp = new ComparableBeanProperty ();
                 cbp.setPath (path);
@@ -228,8 +221,6 @@ public abstract class BeanDiffer <T> {
                 cbp.setRight (right);
                 properties.add (cbp);
             } else if (pd.getPropertyType ().getPackage ().getName ().equals ("java.lang")) {
-                // System.out.println ("java lang comparisson of " + pd +
-                // ", " + pd.getPropertyType ().getPackage ().getName ());
 
                 final Object newLeft = readMethod.invoke (left);
                 final Object newRight = readMethod.invoke (right);
@@ -304,5 +295,12 @@ public abstract class BeanDiffer <T> {
     }
 
     public abstract BeanFieldComparator getComparationStrategy ();
+
+    public BeanDiffer<T> withLogger (final DiffLogger logger) {
+        this.logger = logger;
+        getComparationStrategy ().setLogger (logger);
+
+        return this;
+    }
 
 }
