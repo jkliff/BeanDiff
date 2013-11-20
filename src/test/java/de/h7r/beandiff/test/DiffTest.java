@@ -9,6 +9,7 @@ import de.h7r.beandiff.BeanDiffResult;
 import de.h7r.beandiff.internal.BeanDiffer;
 import de.h7r.beandiff.internal.ComparableBeanProperty;
 import de.h7r.beandiff.test.beans.MyCircularTestBeanA;
+import de.h7r.beandiff.test.beans.MyNonFullPropertyBean;
 import de.h7r.beandiff.test.beans.MyRecursiveTestBean;
 import de.h7r.beandiff.test.beans.MyTestBean;
 import de.h7r.beandiff.test.beans.MyTestBean2;
@@ -122,7 +123,7 @@ public class DiffTest {
         MyTestBean2 right = new MyTestBean2 ();
         right.setFoo (new MyTestBean ());
 
-        BeanDiffer<MyTestBean2> diff = BeanDiff.newInstance ();
+        BeanDiffer<MyTestBean2> diff = BeanDiff.ofValues ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
@@ -138,7 +139,7 @@ public class DiffTest {
         left.setBar (1);
         left.setFoo ("asdf");
 
-        BeanDiffer<MyTestBean> diff = BeanDiff.newInstance ();
+        BeanDiffer<MyTestBean> diff = BeanDiff.ofValues ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, left);
@@ -158,7 +159,7 @@ public class DiffTest {
         // java caches this string, so is ok.
         right.setFoo ("asdf");
 
-        BeanDiffer<MyTestBean> diff = BeanDiff.newInstance ();
+        BeanDiffer<MyTestBean> diff = BeanDiff.ofValues ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
@@ -178,33 +179,12 @@ public class DiffTest {
         right.setBar (1);
         right.setFoo (foo);
 
-        BeanDiffer<MyTestBean> diff = BeanDiff.<MyTestBean>newInstance ();
+        BeanDiffer<MyTestBean> diff = BeanDiff.<MyTestBean>ofValues ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
         Assert.assertNotNull (result);
         Assert.assertEquals (0, result.getMismatchingFields ().size ());
-    }
-
-    @Test
-    @Ignore
-    // FIXME find a proper use case. do i need to check by instance at all?
-    public void testSimpleAPIInstances4 () {
-
-        MyTestBean2 left = new MyTestBean2 ();
-
-        left.setFoo (new MyTestBean ());
-        MyTestBean2 right = new MyTestBean2 ();
-
-        right.setFoo (new MyTestBean ());
-
-        BeanDiffer<MyTestBean2> diff = BeanDiff.newInstance ();
-        Assert.assertNotNull (diff);
-
-        BeanDiffResult result = diff.of (left, right);
-        Assert.assertNotNull (result);
-
-        Assert.assertEquals (1, result.getMismatchingFields ().size ());
     }
 
     @Test
@@ -219,7 +199,7 @@ public class DiffTest {
         // java caches this string, so is ok.
         right.setFoo (myTestBean);
 
-        BeanDiffer<MyTestBean2> diff = BeanDiff.newInstance ();
+        BeanDiffer<MyTestBean2> diff = BeanDiff.ofValues ();
         Assert.assertNotNull (diff);
 
         BeanDiffResult result = diff.of (left, right);
@@ -229,79 +209,51 @@ public class DiffTest {
     }
 
     /*
-     * @Test
-     * 
-     * @Ignore public void testStopOnFirstMismatch1 () {
-     * 
-     * MyTestBean left = new MyTestBean (); left.setBar (1); left.setFoo
-     * ("asdf"); MyTestBean right = new MyTestBean (); right.setBar (1);
-     * 
-     * BeanDiffer<MyTestBean> diff = BeanDiff.stopOnFirstMismatch ().newInstance
-     * (); Assert.assertNotNull (diff);
-     * 
-     * BeanDiffResult result = diff.of (left, right); Assert.assertNotNull
-     * (result);
-     * 
-     * Assert.assertEquals (1, result.getMismatchingFields ().size ());
+     * @Test public void testBeansDifferentClasses () { BeanDiffer<Object> diff
+     * = BeanDiff.newInstance (); // non cached Integer final Integer right =
+     * 4000; final String left = "foo"; BeanDiffResult of = diff.of (left,
+     * right); Assert.assertNotNull (of); Assert.assertEquals (1,
+     * of.getMismatchingFields ().size ()); ComparableBeanProperty
+     * mismatchingFields = of.getMismatchingFields ().iterator ().next ();
+     * Assert.assertTrue (mismatchingFields.getLeft () == left);
+     * Assert.assertTrue (mismatchingFields.getRight () == right);
      * 
      * }
-     * 
-     * @Test public void testStopOnFirstMismatch2 () {
-     * 
-     * MyTestBean2 left = new MyTestBean2 ();
-     * 
-     * MyTestBean myTestBean = new MyTestBean (); left.setFoo (myTestBean);
-     * MyTestBean2 right = new MyTestBean2 ();
-     * 
-     * // java caches this string, so is ok. right.setFoo (myTestBean);
-     * 
-     * BeanDiffer<MyTestBean2> diff = BeanDiff.stopOnFirstMismatch
-     * ().newInstance (); Assert.assertNotNull (diff);
-     * 
-     * BeanDiffResult result = diff.of (left, right); Assert.assertNotNull
-     * (result);
-     * 
-     * Assert.assertEquals (0, result.getMismatchingFields ().size ()); }
      */
-    @Test
-    public void testNoDiff1 () {
-        // Set<Field> fields = BeanDiff.newInstance ().
-
-        // Assert.assertTrue (0, fields.size ());
-    }
 
     @Test
-    public void testNoDiffRecursive () {
+    public void testBeansDifferentIgnoreOnlyGetter () {
+        MyNonFullPropertyBean a = new MyNonFullPropertyBean ();
+        MyNonFullPropertyBean b = new MyNonFullPropertyBean ();
 
-    }
+        a.setPropertyWithGetterAndSetter ("foo");
+        b.setPropertyWithGetterAndSetter ("bar");
 
-    @Test
-    public void testSimpleDiff () {
+        BeanDiffer<MyNonFullPropertyBean> differ = BeanDiff.<MyNonFullPropertyBean>ofValues ().onPropertyWithoutSetter (
+                BeanDiff.GetterOnlyProperty.IGNORE);
 
-    }
+        BeanDiffResult result = differ.of (a, b);
+        Assert.assertNotNull (result);
 
-    @Test
-    public void testMultipleDiffs () {
-
-    }
-
-    @Test
-    public void testMultipleDiffsRecursive () {
+        Assert.assertEquals (1, result.getMismatchingFields ().size ());
 
     }
 
     @Test
-    public void testBeansDifferentClasses () {
-        BeanDiffer<Object> diff = BeanDiff.newInstance ();
-        // non cached Integer
-        final Integer right = 4000;
-        final String left = "foo";
-        BeanDiffResult of = diff.of (left, right);
-        Assert.assertNotNull (of);
-        Assert.assertEquals (1, of.getMismatchingFields ().size ());
-        ComparableBeanProperty mismatchingFields = of.getMismatchingFields ().iterator ().next ();
-        Assert.assertTrue (mismatchingFields.getLeft () == left);
-        Assert.assertTrue (mismatchingFields.getRight () == right);
+    public void testBeansDifferentAcceptOnlyGetter () {
+        MyNonFullPropertyBean a = new MyNonFullPropertyBean ();
+        MyNonFullPropertyBean b = new MyNonFullPropertyBean ();
+
+        a.setPropertyWithGetterAndSetter ("foo");
+        b.setPropertyWithGetterAndSetter ("bar");
+
+        BeanDiffer<MyNonFullPropertyBean> differ = BeanDiff.<MyNonFullPropertyBean>ofValues ();
+
+        BeanDiffResult result = differ.of (a, b);
+        Assert.assertNotNull (result);
+
+        Assert.assertEquals (1, result.getMismatchingFields ().size ());
 
     }
+
 }

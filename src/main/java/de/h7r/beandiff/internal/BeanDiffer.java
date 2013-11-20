@@ -19,8 +19,10 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import de.h7r.beandiff.BeanDiff;
 import de.h7r.beandiff.BeanDiffResult;
 import de.h7r.beandiff.BeanDiffRuntimeException;
+import de.h7r.beandiff.BeanDiff.GetterOnlyProperty;
 import de.h7r.beandiff.logger.DiffLogger;
 
 /**
@@ -28,8 +30,9 @@ import de.h7r.beandiff.logger.DiffLogger;
  */
 public abstract class BeanDiffer <T> {
 
-    private Set<Integer> visitedObjectAddresses = Sets.newHashSet ();
-    private DiffLogger   logger                 = DiffLogger.NOOP_LOGGER;
+    private Set<Integer>                visitedObjectAddresses = Sets.newHashSet ();
+    private DiffLogger                  logger                 = DiffLogger.NOOP_LOGGER;
+    private BeanDiff.GetterOnlyProperty onGetterOnly           = BeanDiff.GetterOnlyProperty.ACCEPT;
 
     public final BeanDiffResult of (final T left,
                                     final T right) {
@@ -37,7 +40,7 @@ public abstract class BeanDiffer <T> {
             Preconditions.checkNotNull (left);
             Preconditions.checkNotNull (right);
 
-            final BeanFieldComparator bfc = getComparationStrategy ();
+            final BeanFieldComparator bfc = getComparissonStrategy ();
 
             final List<ComparableBeanProperty> properties = getProperties (bfc, "", Introspector.getBeanInfo (left.getClass ()), left,
                     right);
@@ -177,6 +180,11 @@ public abstract class BeanDiffer <T> {
                 continue;
             }
 
+            if (onGetterOnly == GetterOnlyProperty.IGNORE && pd.getWriteMethod () == null) {
+                logger.log (String.format ("Ignoring property %s: getter only", pd.getName ()));
+                continue;
+            }
+
             int idHashCode = System.identityHashCode (pd);
 
             if (!pd.getPropertyType ().isPrimitive () && visitedObjectAddresses.contains (idHashCode)) {
@@ -294,12 +302,17 @@ public abstract class BeanDiffer <T> {
         return properties;
     }
 
-    public abstract BeanFieldComparator getComparationStrategy ();
+    public abstract BeanFieldComparator getComparissonStrategy ();
 
     public BeanDiffer<T> withLogger (final DiffLogger logger) {
         this.logger = logger;
-        getComparationStrategy ().setLogger (logger);
+        getComparissonStrategy ().setLogger (logger);
 
+        return this;
+    }
+
+    public BeanDiffer<T> onPropertyWithoutSetter (final GetterOnlyProperty onGetterOnly) {
+        this.onGetterOnly = onGetterOnly;
         return this;
     }
 

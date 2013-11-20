@@ -22,7 +22,7 @@ public class ValuesBeanDiffer <T>
                                                                    };
 
     @Override
-    public BeanFieldComparator getComparationStrategy () {
+    public BeanFieldComparator getComparissonStrategy () {
 
         return BEAN_FIELD_COMPARATOR;
     }
